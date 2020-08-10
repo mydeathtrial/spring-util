@@ -1,0 +1,2 @@
+org.springframework.boot.SpringApplicationRunListener=\
+cloud.agileframework.spring.listener.SpringBootApplicationRunListener
