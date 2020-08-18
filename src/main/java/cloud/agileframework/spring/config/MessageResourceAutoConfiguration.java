@@ -1,8 +1,10 @@
 package cloud.agileframework.spring.config;
 
 import cloud.agileframework.common.util.properties.PropertiesUtil;
+import cloud.agileframework.spring.properties.ApplicationProperties;
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 1.0
  */
+@EnableConfigurationProperties(ApplicationProperties.class)
 @Configuration
 public class MessageResourceAutoConfiguration {
     @Bean

@@ -21,7 +21,7 @@ public class MessageUtil {
     private MessageUtil() {
     }
 
-    public static String message(String key, String... params) {
+    public static String message(String key, Object... params) {
         Locale locale;
 
         LocaleResolver localeResolver = BeanUtil.getBean(LocaleResolver.class);
