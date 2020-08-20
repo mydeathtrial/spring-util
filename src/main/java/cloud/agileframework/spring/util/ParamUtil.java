@@ -256,15 +256,19 @@ public class ParamUtil {
 
         Object body = map.get(Constant.ResponseAbout.BODY);
         if (body != null) {
-            Object json = JSONUtil.toMapOrList(JSONUtil.toJSON(body.toString()));
-            if (json == null) {
-                return null;
-            }
-            if (Map.class.isAssignableFrom(json.getClass())) {
-                combine(result, (Map<String, Object>) json);
-                result.remove(Constant.ResponseAbout.BODY);
-            } else if (List.class.isAssignableFrom(json.getClass())) {
-                result.put(Constant.ResponseAbout.BODY, json);
+            try {
+                Object json = JSONUtil.toMapOrList(JSONUtil.toJSON(body.toString()));
+                if (json == null) {
+                    return null;
+                }
+                if (Map.class.isAssignableFrom(json.getClass())) {
+                    combine(result, (Map<String, Object>) json);
+                    result.remove(Constant.ResponseAbout.BODY);
+                } else if (List.class.isAssignableFrom(json.getClass())) {
+                    result.put(Constant.ResponseAbout.BODY, json);
+                }
+            } catch (Exception e) {
+                result.put(Constant.ResponseAbout.BODY, body);
             }
         } else {
             result.remove(Constant.ResponseAbout.BODY);
