@@ -1,12 +1,15 @@
 package cloud.agileframework.spring.util;
 
 import cloud.agileframework.spring.util.spring.BeanUtil;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.handler.MatchableHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,7 +38,20 @@ public class MappingUtil {
 
         handlerMethod = handlerMappings.orderedStream().map(handlerMapping -> {
             try {
+
+                Map<String, Object> map = Maps.newHashMap();
+                Enumeration<String> keys = request.getAttributeNames();
+                while (keys.hasMoreElements()) {
+                    String key = keys.nextElement();
+                    map.put(key, request.getAttribute(key));
+                }
+
                 HandlerExecutionChain handlerExecutionChain = handlerMapping.getHandler(request);
+
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    request.setAttribute(entry.getKey(), entry.getValue());
+                }
+
                 Object handler;
                 if (handlerExecutionChain != null) {
                     handler = handlerExecutionChain.getHandler();
