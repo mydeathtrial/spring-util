@@ -2,6 +2,9 @@ package cloud.agileframework.spring.config;
 
 import cloud.agileframework.common.util.properties.PropertiesUtil;
 import cloud.agileframework.spring.properties.ApplicationProperties;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,12 +22,14 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 @EnableConfigurationProperties(ApplicationProperties.class)
+@AutoConfigureBefore(MessageSourceAutoConfiguration.class)
 @Configuration
 public class MessageResourceAutoConfiguration {
     @Bean
     @ConfigurationProperties(
             prefix = "spring.messages"
     )
+    @ConditionalOnMissingBean(MessageSourceProperties.class)
     public MessageSourceProperties messageSourceProperties() {
         return new MessageSourceProperties();
     }
