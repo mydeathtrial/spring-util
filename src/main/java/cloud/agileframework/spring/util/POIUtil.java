@@ -1,4 +1,4 @@
-package cloud.agileframework.spring.util.spring;
+package cloud.agileframework.spring.util;
 
 import cloud.agileframework.common.util.file.FileUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static cloud.agileframework.spring.util.spring.MultipartFileUtil.getFormat;
+import static cloud.agileframework.spring.util.MultipartFileUtil.getFormat;
 
 /**
  * @author 佟盟 on 2018/10/16

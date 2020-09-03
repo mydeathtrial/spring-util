@@ -29,6 +29,13 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
         writer = new PrintWriter(new OutputStreamWriter(buffer, this.getCharacterEncoding()));
     }
 
+    public static HttpServletResponse of(HttpServletResponse response) throws IOException {
+        if (!(response instanceof ResponseWrapper)) {
+            response = new ResponseWrapper(response);
+        }
+        return response;
+    }
+
     @Override
     public ServletOutputStream getOutputStream() {
         return out;

@@ -1,6 +1,5 @@
 package cloud.agileframework.spring.util;
 
-import cloud.agileframework.spring.util.spring.BeanUtil;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.method.HandlerMethod;

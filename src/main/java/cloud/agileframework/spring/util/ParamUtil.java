@@ -4,7 +4,6 @@ import cloud.agileframework.common.constant.Constant;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.json.JSONUtil;
 import cloud.agileframework.common.util.object.ObjectUtil;
-import cloud.agileframework.spring.util.spring.MultipartFileUtil;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +38,32 @@ public class ParamUtil {
         }
 
         inParam = parseOrdinaryVariable(currentRequest);
+
+        //将处理过的所有请求参数传入调用服务对象
+        return inParam;
+    }
+
+    /**
+     * 根据servlet请求、认证信息、目标服务名、目标方法名处理入参
+     */
+    public static Map<String, Object> handleInParamWithFile(HttpServletRequest currentRequest) {
+
+        Map<String, Object> inParam = handleInParam(currentRequest);
+        if (currentRequest == null) {
+            return inParam;
+        }
+        //判断是否存在文件上传
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(currentRequest.getSession().getServletContext());
+        if (multipartResolver.isMultipart(currentRequest)) {
+            Map<String, Object> formData = MultipartFileUtil.getFileFormRequest(currentRequest);
+
+            for (Map.Entry<String, Object> entry : formData.entrySet()) {
+                if (inParam.containsKey(entry.getKey())) {
+                    continue;
+                }
+                inParam.put(entry.getKey(), entry.getValue());
+            }
+        }
 
         //将处理过的所有请求参数传入调用服务对象
         return inParam;
@@ -89,29 +114,9 @@ public class ParamUtil {
             }
         }
 
-        if (currentRequest instanceof RequestWrapper) {
-            Map<String, String[]> forwardMap = currentRequest.getParameterMap();
-            for (Map.Entry<String, String[]> map : forwardMap.entrySet()) {
-                inParam.put(map.getKey(), map.getValue());
-            }
-        }
-
-        //判断是否存在文件上传
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(currentRequest.getSession().getServletContext());
-        if (multipartResolver.isMultipart(currentRequest)) {
-            Map<String, Object> formData = MultipartFileUtil.getFileFormRequest(currentRequest);
-
-            for (Map.Entry<String, Object> entry : formData.entrySet()) {
-                if (inParam.containsKey(entry.getKey())) {
-                    continue;
-                }
-                inParam.put(entry.getKey(), entry.getValue());
-            }
-        } else {
-            String bodyParam = ServletUtil.getBody(currentRequest);
-            if (bodyParam != null) {
-                inParam.put(Constant.ResponseAbout.BODY, bodyParam);
-            }
+        String bodyParam = ServletUtil.getBody(currentRequest);
+        if (bodyParam != null) {
+            inParam.put(Constant.ResponseAbout.BODY, bodyParam);
         }
 
         Enumeration<String> attributeNames = currentRequest.getAttributeNames();

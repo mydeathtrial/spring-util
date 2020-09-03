@@ -1,5 +1,7 @@
 package cloud.agileframework.spring.util.spring;
 
+import cloud.agileframework.spring.util.BeanUtil;
+import cloud.agileframework.spring.util.MessageUtil;
 import com.agile.App;
 import org.junit.Test;
 import org.junit.runner.RunWith;

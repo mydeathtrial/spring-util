@@ -1,6 +1,6 @@
 package cloud.agileframework.spring.listener;
 
-import cloud.agileframework.spring.util.spring.BeanUtil;
+import cloud.agileframework.spring.util.BeanUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;

@@ -1,14 +1,11 @@
 package cloud.agileframework.spring.util;
 
-import cloud.agileframework.common.util.string.StringUtil;
-import cloud.agileframework.spring.util.spring.PropertiesUtil;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 佟盟 on 2017/2/23

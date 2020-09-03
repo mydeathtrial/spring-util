@@ -7,8 +7,18 @@
 可以于任意位置获取spring应用上下文，并以此获取任意bean
 
 * **国际化信息工具MessageUtil**
-依托Agile工具包common-util中的PropertiesUtil扫描任意路径下符合`spring.messages`的国际化配置文件，默认扫描`messages`前缀国际化配置文件
-并提供国际化信息翻译功能。
+针对springboot原生国际化文件扫描增加了对ant风格basename路径支持，这样能够在多模块项目中，放开对各个子模块配置文件路径的限制。如
+```yaml
+#原生
+spring:
+  messages:
+    basename: com/baidu/message,com/alibaba/message,com/spring/message
+---
+#扩展后
+spring:
+  messages:
+    basename: '**/message'
+```
 
 -------
 ## 快速入门

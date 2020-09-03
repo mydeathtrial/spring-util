@@ -1,4 +1,4 @@
-package cloud.agileframework.spring.util.spring;
+package cloud.agileframework.spring.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;

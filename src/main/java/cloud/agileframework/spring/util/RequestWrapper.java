@@ -18,10 +18,18 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
 
     public RequestWrapper(HttpServletRequest request) {
         super(request);
+
         this.params = Maps.newHashMap();
         params.remove(Constant.ResponseAbout.SERVICE);
         params.remove(Constant.ResponseAbout.METHOD);
         params.putAll(request.getParameterMap());
+    }
+
+    public static HttpServletRequest of(HttpServletRequest request) {
+        if (!(request instanceof RequestWrapper)) {
+            request = new RequestWrapper(request);
+        }
+        return request;
     }
 
 
@@ -46,8 +54,17 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
 
     public Map<String, Object> getInParam() {
         if (inParam == null) {
-            inParam = ParamUtil.handleInParam(this);
+            inParam = Maps.newHashMap();
         }
+        inParam.putAll(ParamUtil.handleInParam(this));
+        return inParam;
+    }
+
+    public Map<String, Object> getInParamWithFile() {
+        if (inParam == null) {
+            inParam = Maps.newHashMap();
+        }
+        inParam.putAll(ParamUtil.handleInParamWithFile(this));
         return inParam;
     }
 
