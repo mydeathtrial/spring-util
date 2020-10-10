@@ -3,7 +3,6 @@ package cloud.agileframework.spring.util;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.servlet.LocaleResolver;
 
 /**
  * @author 佟盟
@@ -14,15 +13,9 @@ import org.springframework.web.servlet.LocaleResolver;
  */
 
 public class MessageUtil {
-    private static LocaleResolver localeResolver;
     private static MessageSource messageSource;
 
     private static void init() {
-        localeResolver = BeanUtil.getBean(LocaleResolver.class);
-        if (localeResolver == null) {
-            throw new NoSuchBeanDefinitionException(LocaleResolver.class);
-        }
-
         messageSource = BeanUtil.getBean(MessageSource.class);
         if (messageSource == null) {
             throw new NoSuchBeanDefinitionException(MessageSource.class);
@@ -38,7 +31,7 @@ public class MessageUtil {
     }
 
     public static String messageRequire(String key, Object... params) {
-        if (localeResolver == null || messageSource == null) {
+        if (messageSource == null) {
             init();
         }
         return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
