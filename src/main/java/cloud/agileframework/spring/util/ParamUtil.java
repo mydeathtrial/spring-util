@@ -4,6 +4,7 @@ import cloud.agileframework.common.constant.Constant;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.json.JSONUtil;
 import cloud.agileframework.common.util.object.ObjectUtil;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -262,7 +263,7 @@ public class ParamUtil {
         Object body = map.get(Constant.ResponseAbout.BODY);
         if (body != null) {
             try {
-                Object json = JSONUtil.toMapOrList(JSONUtil.toJSON(body.toString()));
+                Object json = JSONUtil.toMapOrList(JSON.parse(body.toString()));
                 if (json == null) {
                     return null;
                 }
