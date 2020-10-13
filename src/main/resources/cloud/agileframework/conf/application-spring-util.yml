@@ -1,0 +1,6 @@
+spring:
+  messages:
+    encoding: UTF-8
+    use-code-as-default-message: true
+    cache-duration: 3600
+    basename: '**/message'
