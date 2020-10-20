@@ -4,6 +4,7 @@ import cloud.agileframework.common.constant.Constant;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -25,11 +26,12 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
         params.putAll(request.getParameterMap());
     }
 
-    public static HttpServletRequest of(HttpServletRequest request) {
-        if (!(request instanceof RequestWrapper)) {
-            request = new RequestWrapper(request);
+    public static RequestWrapper of(HttpServletRequest request) {
+        RequestWrapper r = WebUtils.getNativeRequest(request, RequestWrapper.class);
+        if (r == null) {
+            return new RequestWrapper(request);
         }
-        return request;
+        return r;
     }
 
 
