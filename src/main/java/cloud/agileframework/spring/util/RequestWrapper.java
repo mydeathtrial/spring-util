@@ -6,7 +6,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -72,5 +76,35 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
 
     public void extendInParam(Map<String, Object> params) {
         getInParam().putAll(params);
+    }
+
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        byte[] bytes = this.getContentAsByteArray();
+        if(bytes.length>0){
+            return new ServletInputStream(){
+                final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+                @Override
+                public int read() {
+                    return inputStream.read();
+                }
+
+                @Override
+                public boolean isFinished() {
+                    return false;
+                }
+
+                @Override
+                public boolean isReady() {
+                    return true;
+                }
+
+                @Override
+                public void setReadListener(ReadListener readListener) {
+
+                }
+            };
+        }
+        return super.getInputStream();
     }
 }
