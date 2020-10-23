@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SecurityUtil {
     private static final String AGILE_SECURITY = "$AGILE_SECURITY";
-    private static final UserDetails ANONYMOUS = new User("anonymous", "", Lists.newArrayList());
+    private static final String AGILE_SECURITY_USER_NAME = "$AGILE_SECURITY_USER_NAME";
+    private static final String ANONYMOUS_USERNAME = "anonymous";
 
     public static UserDetails currentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -28,10 +29,16 @@ public class SecurityUtil {
 
             return (UserDetails) authentication.getPrincipal();
         }
-        return ANONYMOUS;
+        return new User(ANONYMOUS_USERNAME, "", Lists.newArrayList());
+    }
+
+    public static String currentUsername() {
+        Object username = ServletUtil.getCurrentRequest().getAttribute(AGILE_SECURITY_USER_NAME);
+        return username == null ? ANONYMOUS_USERNAME : (String) username;
     }
 
     public static void setCurrentUser(HttpServletRequest request, Authentication currentAuthentication) {
         request.setAttribute(AGILE_SECURITY, currentAuthentication);
+        request.setAttribute(AGILE_SECURITY_USER_NAME, ((UserDetails)currentAuthentication.getPrincipal()).getUsername());
     }
 }
