@@ -12,10 +12,17 @@ import cloud.agileframework.spring.properties.ApplicationProperties;
  * @since 1.0
  */
 public class IdUtil {
+    private IdUtil() {
+    }
+
     private static SnowflakeIdWorker snowflakeIdWorker;
 
     public static Long generatorId() {
         return getSnowflakeIdWorker().nextId();
+    }
+
+    public static String generatorIdToString() {
+        return generatorId().toString();
     }
 
     public static SnowflakeIdWorker getSnowflakeIdWorker() {

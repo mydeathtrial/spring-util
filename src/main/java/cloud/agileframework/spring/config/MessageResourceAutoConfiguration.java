@@ -15,7 +15,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
@@ -41,13 +44,13 @@ public class MessageResourceAutoConfiguration {
 
 
     @Bean
-    public MessageSource messageSource(MessageSourceProperties properties) {
+    public MessageSource messageSource(MessageSourceProperties properties) throws UnsupportedEncodingException {
 
         String[] basenameSource = StringUtils
                 .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",cloud/agileframework/message");
 
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        String rootPath = Class.class.getResource("/").getPath();
+        String rootPath = URLDecoder.decode(Class.class.getResource("/").getPath(), Charset.defaultCharset().name());
         String[] baseNames = Arrays.stream(basenameSource)
                 .map(basename -> ResourceUtil.getResources(basename, "properties"))
                 .filter(Objects::nonNull)
@@ -55,7 +58,7 @@ public class MessageResourceAutoConfiguration {
                 .map(resource -> {
                     try {
                         final URL url = resource.getURL();
-                        String path = url.getPath();
+                        String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
                         if (ResourceUtils.isJarURL(url)) {
                             return path.substring(path.indexOf(".jar!/") + 6, path.indexOf(".properties"));
                         } else {
