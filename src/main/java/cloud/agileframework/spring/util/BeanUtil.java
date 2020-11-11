@@ -1,5 +1,7 @@
 package cloud.agileframework.spring.util;
 
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
@@ -58,5 +60,18 @@ public class BeanUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 获取bean的真实类型
+     *
+     * @param bean bean
+     * @return 真实类型
+     */
+    public static Class<?> getBeanClass(Object bean) {
+        if (AopUtils.isAopProxy(bean)) {
+            return AopProxyUtils.ultimateTargetClass(bean);
+        }
+        return bean.getClass();
     }
 }
