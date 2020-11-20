@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class ParamUtil {
 
+    private static final String BODY = "$AGILE_BODY_PARAM$";
+
     /**
      * 根据servlet请求、认证信息、目标服务名、目标方法名处理入参
      */
@@ -117,7 +119,7 @@ public class ParamUtil {
 
         String bodyParam = ServletUtil.getBody(currentRequest);
         if (bodyParam != null) {
-            inParam.put(Constant.ResponseAbout.BODY, bodyParam);
+            inParam.put(Constant.RequestAbout.BODY, bodyParam);
         }
 
         Enumeration<String> attributeNames = currentRequest.getAttributeNames();
@@ -260,7 +262,7 @@ public class ParamUtil {
     private static Map<String, Object> coverToMap(Map<String, Object> map) {
         Map<String, Object> result = new HashMap<>(map);
 
-        Object body = map.get(Constant.ResponseAbout.BODY);
+        Object body = map.get(Constant.RequestAbout.BODY);
         if (body != null) {
             try {
                 Object json = JSONUtil.toMapOrList(JSON.parse(body.toString()));
@@ -269,15 +271,15 @@ public class ParamUtil {
                 }
                 if (Map.class.isAssignableFrom(json.getClass())) {
                     combine(result, (Map<String, Object>) json);
-                    result.remove(Constant.ResponseAbout.BODY);
+                    result.remove(Constant.RequestAbout.BODY);
                 } else if (List.class.isAssignableFrom(json.getClass())) {
-                    result.put(Constant.ResponseAbout.BODY, json);
+                    result.put(Constant.RequestAbout.BODY, json);
                 }
             } catch (Exception e) {
-                result.put(Constant.ResponseAbout.BODY, body);
+                result.put(Constant.RequestAbout.BODY, body);
             }
         } else {
-            result.remove(Constant.ResponseAbout.BODY);
+            result.remove(Constant.RequestAbout.BODY);
         }
         return result;
     }

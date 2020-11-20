@@ -25,8 +25,8 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
         super(request);
 
         this.params = Maps.newHashMap();
-        params.remove(Constant.ResponseAbout.SERVICE);
-        params.remove(Constant.ResponseAbout.METHOD);
+        params.remove(Constant.RequestAbout.SERVICE);
+        params.remove(Constant.RequestAbout.METHOD);
         params.putAll(request.getParameterMap());
     }
 
