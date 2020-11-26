@@ -1,10 +1,12 @@
 package cloud.agileframework.spring.listener;
 
 import cloud.agileframework.spring.util.BeanUtil;
+import cloud.agileframework.spring.util.PropertiesUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * @author 佟盟
@@ -15,10 +17,20 @@ import org.springframework.core.Ordered;
  */
 public class SpringBootApplicationRunListener implements SpringApplicationRunListener, Ordered {
 
-    private SpringApplication application;
+    private final SpringApplication application;
 
     public SpringBootApplicationRunListener(SpringApplication application, String[] args) {
         this.application = application;
+    }
+
+    @Override
+    public void starting() {
+        application.setDefaultProperties(PropertiesUtil.getProperties());
+    }
+
+    @Override
+    public void environmentPrepared(ConfigurableEnvironment environment) {
+        PropertiesUtil.setEnvironment(environment);
     }
 
     @Override

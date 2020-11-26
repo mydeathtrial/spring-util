@@ -317,7 +317,10 @@ public class ParamUtil {
 
     public static <T> List<T> getInParamOfArray(Map<String, Object> map, String key, Class<T> clazz) {
         Object value = JSONUtil.pathGet(key, map);
-        return ObjectUtil.to(value, new TypeReference<>(clazz));
+        final TypeReference<List<T>> toClass = new TypeReference<List<T>>() {
+        };
+        toClass.addParameterizedType(clazz);
+        return ObjectUtil.to(value, toClass);
     }
 
     /**
