@@ -18,19 +18,33 @@ import java.util.Map;
  * HttpServletRequest扩展对象
  */
 public class RequestWrapper extends ContentCachingRequestWrapper {
-    private final Map<String, String[]> params;
-    private Map<String, Object> inParam;
+    /**
+     * request的parameters
+     */
+    private final Map<String, String[]> parameters;
+    /**
+     * request的入参集
+     */
+    private final Map<String, Object> inParam;
 
     public RequestWrapper(HttpServletRequest request) {
         super(request);
 
-        this.params = Maps.newHashMap();
-        params.remove(Constant.RequestAbout.SERVICE);
-        params.remove(Constant.RequestAbout.METHOD);
-        params.putAll(request.getParameterMap());
+        this.parameters = Maps.newHashMap();
+        parameters.remove(Constant.RequestAbout.SERVICE);
+        parameters.remove(Constant.RequestAbout.METHOD);
+        parameters.putAll(request.getParameterMap());
+
+        inParam = ParamUtil.handleInParamWithFile(this);
     }
 
-    public static RequestWrapper of(HttpServletRequest request) {
+    /**
+     * 提取包装请求
+     *
+     * @param request 请求
+     * @return 包装后的请求
+     */
+    public static RequestWrapper extract(HttpServletRequest request) {
         RequestWrapper r = WebUtils.getNativeRequest(request, RequestWrapper.class);
         if (r == null) {
             return new RequestWrapper(request);
@@ -38,10 +52,14 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
         return r;
     }
 
+    public static boolean isWrapper(HttpServletRequest request) {
+        return WebUtils.getNativeRequest(request, RequestWrapper.class) != null;
+    }
+
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return params;
+        return parameters;
     }
 
     /**
@@ -51,39 +69,28 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
      * @param o   value值
      */
     public void addParameter(String key, String o) {
-        if (this.params.containsKey(key)) {
-            String[] value = params.get(key);
-            params.put(key, ArrayUtils.add(value, o));
+        if (this.parameters.containsKey(key)) {
+            String[] value = parameters.get(key);
+            parameters.put(key, ArrayUtils.add(value, o));
         }
-        this.params.put(key, new String[]{o});
+        this.parameters.put(key, new String[]{o});
     }
 
     public Map<String, Object> getInParam() {
-        if (inParam == null) {
-            inParam = Maps.newHashMap();
-        }
-        inParam.putAll(ParamUtil.handleInParam(this));
-        return inParam;
-    }
-
-    public Map<String, Object> getInParamWithFile() {
-        if (inParam == null) {
-            inParam = Maps.newHashMap();
-        }
-        inParam.putAll(ParamUtil.handleInParamWithFile(this));
         return inParam;
     }
 
     public void extendInParam(Map<String, Object> params) {
-        getInParam().putAll(params);
+        inParam.putAll(params);
     }
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
         byte[] bytes = this.getContentAsByteArray();
-        if(bytes.length>0){
-            return new ServletInputStream(){
+        if (bytes.length > 0) {
+            return new ServletInputStream() {
                 final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+
                 @Override
                 public int read() {
                     return inputStream.read();
