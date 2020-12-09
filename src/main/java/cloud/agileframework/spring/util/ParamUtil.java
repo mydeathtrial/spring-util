@@ -7,6 +7,7 @@ import cloud.agileframework.common.util.object.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
@@ -87,11 +88,10 @@ public class ParamUtil {
                 if (Collection.class.isAssignableFrom(old.getClass())) {
                     ((Collection<Object>) old).add(value);
                 } else if (old.getClass().isArray()) {
-                    Object[] temp = new Object[Array.getLength(old) + 1];
-                    for (int i = 0; i < Array.getLength(old); i++) {
-                        temp[i] = Array.get(old, i);
-                    }
-                    temp[Array.getLength(old)] = value;
+                    final int length = Array.getLength(old);
+                    Object[] temp = new Object[length + 1];
+                    System.arraycopy(old, 0, temp, 0, length);
+                    temp[length] = value;
                     from.put(key, temp);
                 } else {
                     Object[] temp = new Object[2];
@@ -117,9 +117,9 @@ public class ParamUtil {
             }
         }
 
-        String bodyParam = ServletUtil.getBody(currentRequest);
+        byte[] bodyParam = ServletUtil.getBody(currentRequest);
         if (bodyParam != null) {
-            inParam.put(Constant.RequestAbout.BODY, bodyParam);
+            currentRequest.setAttribute(Constant.RequestAbout.BODY_SOURCE, bodyParam);
         }
 
         Enumeration<String> attributeNames = currentRequest.getAttributeNames();
@@ -130,7 +130,7 @@ public class ParamUtil {
                 inParam.put(key.replace(prefix, ""), currentRequest.getAttribute(key));
             }
         }
-        return coverToMap(inParam);
+        return coverToMap(inParam, currentRequest);
     }
 
     /**
@@ -208,6 +208,11 @@ public class ParamUtil {
         Object value = getInParam(map, key);
 
         if (value != null) {
+            final boolean isAggregate = (typeReference.isArray() || typeReference.isExtendsFrom(Collection.class))
+                    && !value.getClass().isArray() && !Collection.class.isAssignableFrom(value.getClass());
+            if (isAggregate) {
+                value = new Object[]{value};
+            }
             T v = ObjectUtil.to(value, typeReference);
             return v == null ? defaultValue : v;
         } else {
@@ -259,27 +264,36 @@ public class ParamUtil {
      * @param map 未处理的入参集合
      * @return 处理过后的入参集合
      */
-    private static Map<String, Object> coverToMap(Map<String, Object> map) {
+    private static Map<String, Object> coverToMap(Map<String, Object> map, HttpServletRequest currentRequest) {
         Map<String, Object> result = new HashMap<>(map);
 
-        Object body = map.get(Constant.RequestAbout.BODY);
-        if (body != null) {
+        byte[] body = (byte[]) currentRequest.getAttribute(Constant.RequestAbout.BODY_SOURCE);
+        if (body == null || body.length == 0) {
+            return result;
+        }
+        final String contentType = currentRequest.getContentType();
+        MediaType candidateContentType = MediaType.APPLICATION_JSON;
+        if (contentType != null) {
+            candidateContentType = MediaType.parseMediaType(contentType);
+        }
+        if (MediaType.APPLICATION_JSON.isCompatibleWith(candidateContentType)) {
             try {
-                Object json = JSONUtil.toMapOrList(JSON.parse(body.toString()));
+                String characterEncoding = currentRequest.getCharacterEncoding();
+                String bodyParam = new String(body, characterEncoding == null ? "UTF-8" : characterEncoding);
+                Object json = JSONUtil.toMapOrList(JSON.parse(bodyParam));
+
                 if (json == null) {
-                    return null;
+                    return result;
                 }
                 if (Map.class.isAssignableFrom(json.getClass())) {
                     combine(result, (Map<String, Object>) json);
-                    result.remove(Constant.RequestAbout.BODY);
+                    currentRequest.setAttribute(Constant.RequestAbout.BODY, Constant.RequestAbout.BODY_REF);
                 } else if (List.class.isAssignableFrom(json.getClass())) {
-                    result.put(Constant.RequestAbout.BODY, json);
+                    currentRequest.setAttribute(Constant.RequestAbout.BODY, json);
                 }
             } catch (Exception e) {
-                result.put(Constant.RequestAbout.BODY, body);
+                e.printStackTrace();
             }
-        } else {
-            result.remove(Constant.RequestAbout.BODY);
         }
         return result;
     }

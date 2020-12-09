@@ -1,5 +1,6 @@
 package cloud.agileframework.spring.util;
 
+import cloud.agileframework.common.util.stream.StreamUtil;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.request.RequestAttributes;
@@ -8,7 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -29,10 +30,7 @@ public class ServletUtil {
 
     public static String getCurrentRequestUrl() {
         HttpServletRequest request = getCurrentRequest();
-        if (request != null) {
-            return request.getRequestURI();
-        }
-        return null;
+        return request.getRequestURI();
     }
 
     /**
@@ -158,23 +156,14 @@ public class ServletUtil {
      *
      * @param request 请求request
      */
-    public static String getBody(HttpServletRequest request) {
-
+    public static byte[] getBody(HttpServletRequest request) {
         try {
-            BufferedReader br = request.getReader();
-
-            String temp;
-            StringBuilder jsonStr = new StringBuilder();
-            while ((temp = br.readLine()) != null) {
-                jsonStr.append(temp);
-            }
-            if (jsonStr.length() > 0) {
-                return jsonStr.toString();
-            }
-        } catch (Exception ignored) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            StreamUtil.toOutputStream(request.getInputStream(), bytes);
+            return bytes.toByteArray();
+        } catch (Exception e) {
             return null;
         }
-        return null;
     }
 
     /**
@@ -199,7 +188,7 @@ public class ServletUtil {
         if (requestAttributes instanceof ServletRequestAttributes) {
             return ((ServletRequestAttributes) requestAttributes).getRequest();
         }
-        return null;
+        throw new RuntimeException("not found request");
     }
 
     /**
@@ -212,7 +201,7 @@ public class ServletUtil {
         if (requestAttributes instanceof ServletRequestAttributes) {
             return ((ServletRequestAttributes) requestAttributes).getResponse();
         }
-        return null;
+        throw new RuntimeException("not found response");
     }
 
     /**
