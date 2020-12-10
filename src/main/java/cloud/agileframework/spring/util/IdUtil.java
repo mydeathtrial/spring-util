@@ -25,7 +25,7 @@ public class IdUtil {
         return generatorId().toString();
     }
 
-    public static SnowflakeIdWorker getSnowflakeIdWorker() {
+    public static synchronized SnowflakeIdWorker getSnowflakeIdWorker() {
 
         if (snowflakeIdWorker == null) {
             ApplicationProperties properties = BeanUtil.getBean(ApplicationProperties.class);
