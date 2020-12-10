@@ -266,6 +266,7 @@ public class ParamUtil {
      */
     private static Map<String, Object> coverToMap(Map<String, Object> map, HttpServletRequest currentRequest) {
         Map<String, Object> result = new HashMap<>(map);
+        currentRequest.setAttribute(Constant.RequestAbout.BODY, Constant.RequestAbout.BODY_REF);
 
         byte[] body = (byte[]) currentRequest.getAttribute(Constant.RequestAbout.BODY_SOURCE);
         if (body == null || body.length == 0) {
@@ -287,7 +288,6 @@ public class ParamUtil {
                 }
                 if (Map.class.isAssignableFrom(json.getClass())) {
                     combine(result, (Map<String, Object>) json);
-                    currentRequest.setAttribute(Constant.RequestAbout.BODY, Constant.RequestAbout.BODY_REF);
                 } else if (List.class.isAssignableFrom(json.getClass())) {
                     currentRequest.setAttribute(Constant.RequestAbout.BODY, json);
                 }
