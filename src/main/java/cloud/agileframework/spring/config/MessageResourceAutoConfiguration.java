@@ -47,10 +47,10 @@ public class MessageResourceAutoConfiguration {
     public MessageSource messageSource(MessageSourceProperties properties) throws UnsupportedEncodingException {
 
         String[] basenameSource = StringUtils
-                .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",cloud/agileframework/message");
+                .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",cloud/agileframework/*/message");
 
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        String rootPath = URLDecoder.decode(Class.class.getResource("/").getPath(), Charset.defaultCharset().name());
+        String rootPath = URLDecoder.decode(this.getClass().getResource("/").getPath(), Charset.defaultCharset().name());
         String[] baseNames = Arrays.stream(basenameSource)
                 .map(basename -> ResourceUtil.getResources(basename, "properties"))
                 .filter(Objects::nonNull)

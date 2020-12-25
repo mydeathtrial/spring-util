@@ -229,7 +229,7 @@ public class ParamUtil {
      */
     public static MultipartFile getInParamOfFile(Map<String, Object> map, String key) {
         List<MultipartFile> files = getInParamOfFiles(map, key);
-        if (!files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             return files.get(0);
         }
         return null;

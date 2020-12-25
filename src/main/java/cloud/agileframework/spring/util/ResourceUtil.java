@@ -259,7 +259,7 @@ public class ResourceUtil {
      * @return
      */
     public static Resource[] getResources(String name, String extension) {
-        ClassLoader classLoader = Object.class.getClassLoader();
+        ClassLoader classLoader = ResourceUtil.class.getClassLoader();
         String target = name.replace('.', '/');
         try {
             return new PathMatchingResourcePatternResolver(classLoader)
@@ -270,7 +270,7 @@ public class ResourceUtil {
     }
 
     public static String getClassPath(Resource resource) throws IOException {
-        String classesPath = Class.class.getResource(Constant.RegularAbout.SLASH).getPath();
+        String classesPath = ResourceUtil.class.getResource(Constant.RegularAbout.SLASH).getPath();
         classesPath = URLDecoder.decode(classesPath, "utf-8");
         String path = URLDecoder.decode(resource.getURL().getPath(), "utf-8");
         if (path.contains(classesPath)) {
