@@ -20,7 +20,6 @@ import static cloud.agileframework.spring.util.MultipartFileUtil.getFormat;
 public class POIUtil extends cloud.agileframework.common.util.file.poi.POIUtil {
 
 
-
     /**
      * 读取excel文件成list-map形式
      *
@@ -33,6 +32,7 @@ public class POIUtil extends cloud.agileframework.common.util.file.poi.POIUtil {
 
     private static Workbook parsing(Object file) {
         Workbook result = null;
+        final String xls = "xls";
         if (file instanceof File) {
             String[] s = ((File) file).getName().split("[.]");
             String suffix;
@@ -42,7 +42,7 @@ public class POIUtil extends cloud.agileframework.common.util.file.poi.POIUtil {
                 suffix = Objects.requireNonNull(FileUtil.getFormat((File) file)).toLowerCase();
             }
             try {
-                if ("xls".equals(suffix)) {
+                if (xls.equals(suffix)) {
                     result = new HSSFWorkbook(new FileInputStream((File) file));
                 } else {
                     result = new XSSFWorkbook(new FileInputStream((File) file));
@@ -59,7 +59,7 @@ public class POIUtil extends cloud.agileframework.common.util.file.poi.POIUtil {
                 suffix = Objects.requireNonNull(getFormat((MultipartFile) file)).toLowerCase();
             }
             try {
-                if ("xls".equals(suffix)) {
+                if (xls.equals(suffix)) {
                     result = new HSSFWorkbook(((MultipartFile) file).getInputStream());
                 } else {
                     result = new XSSFWorkbook(((MultipartFile) file).getInputStream());

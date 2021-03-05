@@ -39,6 +39,6 @@ public class SecurityUtil {
 
     public static void setCurrentUser(HttpServletRequest request, Authentication currentAuthentication) {
         request.setAttribute(AGILE_SECURITY, currentAuthentication);
-        request.setAttribute(AGILE_SECURITY_USER_NAME, ((UserDetails)currentAuthentication.getPrincipal()).getUsername());
+        request.setAttribute(AGILE_SECURITY_USER_NAME, ((UserDetails) currentAuthentication.getPrincipal()).getUsername());
     }
 }

@@ -162,13 +162,9 @@ public class ResourceUtil {
                 }
             }
         } finally {
-            IOUtils.closeQuietly(jarFile);
+            IOUtils.closeQuietly(jarFile, null);
         }
     }
-
-//    public static void main(String[] args) {
-//        getClassFromPackage("com.alibaba", true);
-//    }
 
     /**
      * 在package对应的路径下找到所有的class

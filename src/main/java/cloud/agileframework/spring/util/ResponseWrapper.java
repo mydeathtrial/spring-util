@@ -67,7 +67,7 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
     }
 
     private static class WrapperOutputStream extends ServletOutputStream {
-        private ByteArrayOutputStream bos;
+        private final ByteArrayOutputStream bos;
 
         public WrapperOutputStream(ByteArrayOutputStream stream) {
             bos = stream;

@@ -73,7 +73,7 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
      * @param o   value值
      */
     public void addParameter(String key, String o) {
-        if (this.parameters.containsKey(key)) {
+        if (parameters.containsKey(key)) {
             String[] value = parameters.get(key);
             parameters.put(key, ArrayUtils.add(value, o));
         }

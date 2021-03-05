@@ -14,8 +14,7 @@ public class BeanUtilTest {
 
     @Test
     public void getBean() {
-        System.out.println(MessageUtil.message("messageKey", "|tudou"));
-        ;
+        System.out.println(MessageUtil.message("messageKey", null, "|tudou"));
         System.out.println(BeanUtil.getApplicationContext().getId());
     }
 }

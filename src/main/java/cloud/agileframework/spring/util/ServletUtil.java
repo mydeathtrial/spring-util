@@ -73,7 +73,9 @@ public class ServletUtil {
      * @return 格式化后的IP地址
      */
     public static String localhostFormat(String ip) {
-        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+        final String localhost = "127.0.0.1";
+        final String localhost2 = "0:0:0:0:0:0:0:1";
+        if (localhost.equals(ip) || localhost2.equals(ip)) {
             try {
                 ip = InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException unknownhostexception) {
@@ -130,7 +132,8 @@ public class ServletUtil {
     private static boolean isWindowsOS() {
         boolean isWindowsOS = false;
         String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().contains("windows")) {
+        final String windows = "windows";
+        if (osName.toLowerCase().contains(windows)) {
             isWindowsOS = true;
         }
         return isWindowsOS;

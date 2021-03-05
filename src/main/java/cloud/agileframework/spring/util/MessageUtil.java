@@ -22,18 +22,26 @@ public class MessageUtil {
         }
     }
 
-    public static String message(String key, Object... params) {
+    public static String message(String key) {
         try {
-            return messageRequire(key, params);
+            return messageRequire(key, null);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static String messageRequire(String key, Object... params) {
+    public static String message(String key, String defaultValue, Object... params) {
+        try {
+            return messageRequire(key, defaultValue, params);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String messageRequire(String key, String defaultValue, Object... params) {
         if (messageSource == null) {
             init();
         }
-        return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
+        return messageSource.getMessage(key, params, defaultValue, LocaleContextHolder.getLocale());
     }
 }

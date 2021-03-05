@@ -59,10 +59,13 @@ public class MessageResourceAutoConfiguration {
                     try {
                         final URL url = resource.getURL();
                         String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-                        if (ResourceUtils.isJarURL(url)) {
-                            return path.substring(path.indexOf(".jar!/") + 6, path.indexOf(".properties"));
-                        } else {
+                        final String jar = ".jar!/";
+                        if (ResourceUtils.isJarURL(url) && path.contains(jar)) {
+                            return path.substring(path.indexOf(jar) + 6, path.indexOf(".properties"));
+                        } else if (path.contains(rootPath)) {
                             return path.substring(path.indexOf(rootPath) + rootPath.length(), path.indexOf(".properties"));
+                        } else {
+                            return null;
                         }
                     } catch (Exception e) {
                         return null;
