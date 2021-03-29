@@ -5,8 +5,10 @@ import cloud.agileframework.spring.util.BeanUtil;
 
 import java.time.Duration;
 import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +25,8 @@ public class AsyncManager {
     /**
      * 异步操作任务调度线程池
      */
-    private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory("日志"));
+    private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory("延时队列"));
+    private final ThreadPoolExecutor executor2 = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,Integer.MAX_VALUE,3,TimeUnit.MINUTES, new LinkedBlockingQueue<>(),new ThreadFactory("阻塞队列"));
 
     /**
      * 单例模式
@@ -58,12 +61,7 @@ public class AsyncManager {
      * @param task 任务
      */
     public static void execute(Runner task) {
-        getSingle().executor.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                RUNNER_WRAPPER.run(task);
-            }
-        }, OPERATE_DELAY_TIME, TimeUnit.MILLISECONDS);
+        getSingle().executor2.execute(() -> RUNNER_WRAPPER.run(task));
     }
 
     /**
