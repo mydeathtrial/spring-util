@@ -33,7 +33,7 @@ spring:
 
 您可以从[最新稳定版本]下载包(https://github.com/mydeathtrial/spring-util/releases). 该包已上传至maven中央仓库，可在pom中直接声明引用
 
-以版本spring-util-2.0.10.jar为例。
+以版本spring-util-2.0.11.jar为例。
 
 #### 步骤 2: 添加maven依赖
 
@@ -49,7 +49,7 @@ spring:
 <dependency>
 <groupId>cloud.agileframework</groupId>
 <artifactId>spring-util</artifactId>
-<version>2.0.10</version>
+<version>2.0.11</version>
 </dependency>
 ```
 
