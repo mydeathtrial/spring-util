@@ -7,6 +7,7 @@ import cloud.agileframework.common.util.object.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -333,7 +335,11 @@ public class ParamUtil {
         Object value = JSONUtil.pathGet(key, map);
         final TypeReference<List<T>> toClass = new TypeReference<List<T>>() {
         };
-        toClass.addParameterizedType(clazz);
+        ParameterizedType parameterizedType = (ParameterizedType) toClass.getType();
+        parameterizedType = TypeUtils.parameterizeWithOwner(parameterizedType.getOwnerType(),
+                (Class<?>) parameterizedType.getRawType(),
+                clazz);
+        toClass.replace(parameterizedType);
         return ObjectUtil.to(value, toClass);
     }
 
