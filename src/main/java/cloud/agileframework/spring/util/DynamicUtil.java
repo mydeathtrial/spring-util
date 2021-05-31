@@ -1,11 +1,14 @@
 package cloud.agileframework.spring.util;
 
+import cloud.agileframework.common.util.clazz.ClassUtil;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.object.ObjectUtil;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.cglib.beans.BeanGenerator;
 import org.springframework.cglib.beans.BeanMap;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -96,6 +99,7 @@ public class DynamicUtil {
             BeanGenerator generator = new BeanGenerator();
             if (null != superclass) {
                 generator.setSuperclass(superclass);
+                generator.setClassLoader(superclass.getClassLoader());
             }
             BeanGenerator.addProperties(generator, propertyMap);
             return generator.create();
@@ -128,21 +132,27 @@ public class DynamicUtil {
     /**
      * 根据类型和属性信息生成动态对象
      *
-     * @param superclass  依据对象
-     * @param propertyMap 属性集合
+     * @param superclass 依据对象
+     * @param valueMap   属性集合
      * @return 动态对象
      */
-    public static DynamicBean withProperties(Class<?> superclass, Map<String, Object> propertyMap) {
-        Map<String, Class<?>> classMap = propertyMap.entrySet()
+    public static DynamicBean withProperties(Class<?> superclass, Map<String, Object> valueMap, String... excludeFields) {
+        Map<String, Class<?>> classMap = valueMap.entrySet()
                 .stream()
-                .filter(e -> e.getValue() != null)
-                .collect(Collectors.toMap(Map.Entry::getKey, b -> b.getValue().getClass()));
+                .filter(property -> {
+                    Field field = ClassUtil.getField(superclass, property.getKey());
+                    return field == null;
+                })
+                .collect(Collectors.toMap(Map.Entry::getKey, b -> Object.class));
         DynamicBean dynamicBean = of(superclass, classMap);
-        for (Map.Entry<String, Object> e : propertyMap.entrySet()) {
-            if (e.getValue() == null) {
+        for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
+            if (entry.getValue() == null || ArrayUtils.contains(excludeFields, entry.getKey())) {
                 continue;
             }
-            dynamicBean.setValue(e.getKey(), e.getValue());
+            try {
+                dynamicBean.setValue(entry.getKey(), entry.getValue());
+            } catch (Exception ignored) {
+            }
         }
         return dynamicBean;
     }
@@ -160,34 +170,28 @@ public class DynamicUtil {
             return null;
         }
 
-        Map<String, Object> valueMap = ObjectUtil.to(superObject, new TypeReference<Map<String, Object>>() {
-        });
+        Map<String, Object> valueMap = Maps.newHashMap();
         valueMap.put(fieldName, fieldValue);
-        for (String excludeField : excludeFields) {
-            valueMap.remove(excludeField);
-        }
-        return withProperties(superObject.getClass(), valueMap);
+        return withPropertyByObject(superObject, valueMap, excludeFields);
     }
 
     /**
      * 根据已有对象生成动态对象
      *
      * @param superObject 已有对象
-     * @param propertyMap 设置的属性值集合
+     * @param valueMap    设置的属性值集合
      * @return 动态对象
      */
-    public static DynamicBean withPropertyByObject(Object superObject, Map<String, Object> propertyMap, String... excludeFields) {
+    public static DynamicBean withPropertyByObject(Object superObject, Map<String, Object> valueMap, String... excludeFields) {
         if (superObject == null) {
             return null;
         }
-
-        Map<String, Object> valueMap = ObjectUtil.to(superObject, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> oldValues = ObjectUtil.to(superObject, new TypeReference<Map<String, Object>>() {
         });
-        valueMap.putAll(propertyMap);
-        for (String excludeField : excludeFields) {
-            valueMap.remove(excludeField);
+        if (oldValues != null) {
+            valueMap.putAll(oldValues);
         }
-        return withProperties(superObject.getClass(), valueMap);
+        return withProperties(superObject.getClass(), valueMap, excludeFields);
     }
 
 

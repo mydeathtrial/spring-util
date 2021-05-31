@@ -11,7 +11,7 @@ import java.util.List;
  * @since 1.0
  */
 public class O1 {
-    @Remark("姓名")
+    @Remark(value = "姓名", ignoreCompare = false)
     private String name;
     private int age;
     private List<String> friends;
