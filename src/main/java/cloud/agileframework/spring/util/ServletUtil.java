@@ -1,5 +1,6 @@
 package cloud.agileframework.spring.util;
 
+import cloud.agileframework.common.util.http.HttpUtil;
 import cloud.agileframework.common.util.stream.StreamUtil;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -270,29 +271,9 @@ public class ServletUtil {
     /**
      * 获取本机的所有ip
      *
-     * @return
+     * @return 本机ip列表
      */
-    public static List<InetAddress> getLocalIpAddr() {
-        List<InetAddress> ipList = new ArrayList<>();
-        Enumeration<?> interfaces;
-        try {
-            interfaces = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException e) {
-            return ipList;
-        }
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface ni = (NetworkInterface) interfaces.nextElement();
-            Enumeration<?> ipAddrEnum = ni.getInetAddresses();
-            while (ipAddrEnum.hasMoreElements()) {
-                InetAddress addr = (InetAddress) ipAddrEnum.nextElement();
-                if (addr.isLoopbackAddress() || addr.isLinkLocalAddress()) {
-                    continue;
-                }
-                ipList.add(addr);
-            }
-        }
-
-
-        return ipList;
+    public static List<InetAddress> getLocalIpAddress() {
+        return HttpUtil.getLocalIpAddress();
     }
 }
