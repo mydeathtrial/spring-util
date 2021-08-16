@@ -24,11 +24,6 @@ public class SpringBootApplicationRunListener implements SpringApplicationRunLis
     }
 
     @Override
-    public void starting() {
-        application.setDefaultProperties(PropertiesUtil.getProperties());
-    }
-
-    @Override
     public void environmentPrepared(ConfigurableEnvironment environment) {
         PropertiesUtil.setEnvironment(environment);
     }
