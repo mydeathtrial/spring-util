@@ -28,11 +28,11 @@ public class AopUtil extends AopUtils {
         return null;
     }
 
-    public static Method getMethd(JoinPoint joinPoint) {
+    public static Method getMethod(JoinPoint joinPoint) {
         try {
             String methodName = joinPoint.getSignature().getName();
             Class<?> targetClass = joinPoint.getTarget().getClass();
-            Class[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getParameterTypes();
+            Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getParameterTypes();
             return targetClass.getMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e) {
             return null;
