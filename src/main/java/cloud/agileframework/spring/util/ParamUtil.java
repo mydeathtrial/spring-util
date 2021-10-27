@@ -31,8 +31,6 @@ import java.util.Map;
  */
 public class ParamUtil {
 
-    private static final String BODY = "$AGILE_BODY_PARAM$";
-
     /**
      * 根据servlet请求、认证信息、目标服务名、目标方法名处理入参
      */
@@ -126,8 +124,8 @@ public class ParamUtil {
 
         Enumeration<String> attributeNames = currentRequest.getAttributeNames();
         while (attributeNames.hasMoreElements()) {
-            String key = attributeNames.nextElement();
             String prefix = "Parameter_";
+            String key = attributeNames.nextElement();
             if (key.startsWith(prefix)) {
                 inParam.put(key.replace(prefix, ""), currentRequest.getAttribute(key));
             }
