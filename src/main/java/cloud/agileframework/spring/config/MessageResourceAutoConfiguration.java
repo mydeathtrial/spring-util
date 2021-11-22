@@ -49,7 +49,7 @@ public class MessageResourceAutoConfiguration {
 	public MessageSource messageSource(MessageSourceProperties properties) throws IOException {
 
 		String[] basenameSource = StringUtils
-				.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",cloud/agileframework/*/message");
+				.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",/message");
 
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 
