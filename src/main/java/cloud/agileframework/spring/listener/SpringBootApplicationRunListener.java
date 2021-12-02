@@ -2,6 +2,7 @@ package cloud.agileframework.spring.listener;
 
 import cloud.agileframework.spring.util.BeanUtil;
 import cloud.agileframework.spring.util.PropertiesUtil;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,7 +25,8 @@ public class SpringBootApplicationRunListener implements SpringApplicationRunLis
     }
 
     @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {
+    public void environmentPrepared(ConfigurableBootstrapContext bootstrapContext, ConfigurableEnvironment environment) {
+        SpringApplicationRunListener.super.environmentPrepared(bootstrapContext, environment);
         PropertiesUtil.setEnvironment(environment);
     }
 
