@@ -162,11 +162,14 @@ public class MultipartFileUtil extends FileUtil {
 		if (!StringUtil.isBlank(tempPath)) {
 			return tempPath;
 		}
+		String filePath;
 		MultipartProperties properties = BeanUtil.getBean(MultipartProperties.class);
-		if (properties == null) {
-			throw new RuntimeException("未加载到缓存文件相关配置");
+		if (properties != null && properties.getLocation()!=null) {
+			filePath = properties.getLocation();
+		}else{
+			filePath = MultipartFileUtil.class.getResource("").getPath();
 		}
-		String filePath = properties.getLocation();
+		
 		File file = new File(filePath);
 
 		if (!file.exists()) {
