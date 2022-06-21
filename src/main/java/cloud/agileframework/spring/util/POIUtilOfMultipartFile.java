@@ -42,7 +42,7 @@ public class POIUtilOfMultipartFile extends POIUtil {
      * @return 格式化结果
      */
     public static List<Map<String, Object>> readExcel(MultipartFile file, List<CellInfo> columns) {
-        Workbook excel = parsing(file);
+        Workbook excel = readFile(file);
         return readExcel(new TypeReference<Map<String, Object>>() {
         }, columns, excel);
     }
@@ -55,11 +55,11 @@ public class POIUtilOfMultipartFile extends POIUtil {
      * @return 格式化结果
      */
     public static <T> List<T> readExcel(MultipartFile file, Class<T> clazz, List<CellInfo> columns) {
-        Workbook excel = parsing(file);
+        Workbook excel = readFile(file);
         return readExcel(new TypeReference<T>(clazz), columns, excel);
     }
 
-    private static Workbook parsing(MultipartFile file) {
+    public static Workbook readFile(MultipartFile file) {
         Workbook result = null;
         final String xls = "xls";
         if (file != null) {
