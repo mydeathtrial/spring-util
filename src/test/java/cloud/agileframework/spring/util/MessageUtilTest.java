@@ -13,24 +13,26 @@ import java.text.MessageFormat;
 @SpringBootTest(classes = App.class)
 public class MessageUtilTest {
 
-	@Test
-	public void testMessage() {
-		final String replaceValue = "|tudou";
-		String message = MessageUtil.message("messageKey", null, replaceValue);
-		Assert.assertEquals(message, MessageFormat.format(PropertiesUtil.getProperty("messageKey"), replaceValue));
-	}
-	@Test
-	public void testTestMessage() {
-		final String defaultValue = "hello {0}";
-		final String params = "tudou";
-		String message = MessageUtil.message("dsa", defaultValue, params);
-		Assert.assertEquals(message, MessageFormat.format(defaultValue, params));
-	}
-	@Test
-	public void testMessageRequire() {
-		final String defaultValue = "hello {0}";
-		final String params = "tudou";
-		String message = MessageUtil.messageRequire("dsa", defaultValue, params);
-		Assert.assertEquals(message, MessageFormat.format(defaultValue, params));
-	}
+    @Test
+    public void testMessage() {
+        final String replaceValue = "|tudou";
+        String message = MessageUtil.message("messageKey", null, replaceValue);
+        Assert.assertEquals(message, MessageFormat.format(PropertiesUtil.getProperty("messageKey"), replaceValue));
+    }
+
+    @Test
+    public void testTestMessage() {
+        final String defaultValue = "hello {0}";
+        final String params = "tudou";
+        String message = MessageUtil.message("dsa", defaultValue, params);
+        Assert.assertEquals(message, MessageFormat.format(defaultValue, params));
+    }
+
+    @Test
+    public void testMessageRequire() {
+        final String defaultValue = "hello {0}";
+        final String params = "tudou";
+        String message = MessageUtil.messageRequire("dsa", defaultValue, params);
+        Assert.assertEquals(message, MessageFormat.format(defaultValue, params));
+    }
 }

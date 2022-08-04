@@ -2,7 +2,6 @@ package cloud.agileframework.spring.util;
 
 import com.agile.App;
 import com.google.common.collect.Sets;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,23 +17,23 @@ import java.util.stream.IntStream;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 public class IdUtilTest {
-	private ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 2, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    private ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 2, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
-	@Test
-	public void testGeneratorId() {
-		Set<Long> set = Sets.newConcurrentHashSet();
-		IntStream.range(0,10000).parallel().forEach((index)->{
-			set.add(IdUtil.generatorId());
-		});
-		Assert.assertEquals(set.size(),10000);
-	}
+    @Test
+    public void testGeneratorId() {
+        Set<Long> set = Sets.newConcurrentHashSet();
+        IntStream.range(0, 10000).parallel().forEach((index) -> {
+            set.add(IdUtil.generatorId());
+        });
+        Assert.assertEquals(set.size(), 10000);
+    }
 
-	@Test
-	public void testGeneratorIdToString() {
-		Set<String> set = Sets.newConcurrentHashSet();
-		IntStream.range(0,10000).parallel().forEach((index)->{
-			set.add(IdUtil.generatorIdToString());
-		});
-		Assert.assertEquals(set.size(),10000);
-	}
+    @Test
+    public void testGeneratorIdToString() {
+        Set<String> set = Sets.newConcurrentHashSet();
+        IntStream.range(0, 10000).parallel().forEach((index) -> {
+            set.add(IdUtil.generatorIdToString());
+        });
+        Assert.assertEquals(set.size(), 10000);
+    }
 }

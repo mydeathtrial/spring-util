@@ -35,75 +35,76 @@ import java.util.stream.Collectors;
 @AutoConfigureBefore(MessageSourceAutoConfiguration.class)
 @Configuration
 public class MessageResourceAutoConfiguration {
-	@Bean
-	@ConfigurationProperties(
-			prefix = "spring.messages"
-	)
-	@ConditionalOnMissingBean(MessageSourceProperties.class)
-	public MessageSourceProperties messageSourceProperties() {
-		return new MessageSourceProperties();
-	}
+    @Bean
+    @ConfigurationProperties(
+            prefix = "spring.messages"
+    )
+    @ConditionalOnMissingBean(MessageSourceProperties.class)
+    public MessageSourceProperties messageSourceProperties() {
+        return new MessageSourceProperties();
+    }
 
 
-	@Bean
-	public MessageSource messageSource(MessageSourceProperties properties) throws IOException {
+    @Bean
+    public MessageSource messageSource(MessageSourceProperties properties) throws IOException {
 
-		String[] basenameSource = StringUtils
-				.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",/message");
+        String[] basenameSource = StringUtils
+                .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename()) + ",/message");
 
-		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 
-		Set<String> classpath = Collections.list(MessageResourceAutoConfiguration.class.getClassLoader().getResources(""))
-				.stream().map(URL::getPath).collect(Collectors.toSet());
-		String[] baseNames = Arrays.stream(basenameSource)
-				.map(basename -> ResourceUtil.getResources(basename, "properties"))
-				.filter(Objects::nonNull)
-				.flatMap(Arrays::stream)
-				.map(resource -> {
-					try {
-						final URL url = resource.getURL();
-						String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
-						final String jar = ".jar!/";
-						if (ResourceUtils.isJarURL(url) && path.contains(jar)) {
-							return path.substring(path.indexOf(jar) + 6, path.indexOf(".properties"));
-						} else {
-							return extractMessagesBaseNames(classpath, path);
-						}
-					} catch (Exception e) {
-						return null;
-					}
-				})
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet())
-				.toArray(new String[]{});
+        Set<String> classpath = Collections.list(MessageResourceAutoConfiguration.class.getClassLoader().getResources(""))
+                .stream().map(URL::getPath).collect(Collectors.toSet());
+        String[] baseNames = Arrays.stream(basenameSource)
+                .map(basename -> ResourceUtil.getResources(basename, "properties"))
+                .filter(Objects::nonNull)
+                .flatMap(Arrays::stream)
+                .map(resource -> {
+                    try {
+                        final URL url = resource.getURL();
+                        String path = URLDecoder.decode(url.getPath(), Charset.defaultCharset().name());
+                        final String jar = ".jar!/";
+                        if (ResourceUtils.isJarURL(url) && path.contains(jar)) {
+                            return path.substring(path.indexOf(jar) + 6, path.indexOf(".properties"));
+                        } else {
+                            return extractMessagesBaseNames(classpath, path);
+                        }
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet())
+                .toArray(new String[]{});
 
-		messageSource.setBasenames(baseNames);
-		if (properties.getEncoding() != null) {
-			messageSource.setDefaultEncoding(properties.getEncoding().name());
-		}
+        messageSource.setBasenames(baseNames);
+        if (properties.getEncoding() != null) {
+            messageSource.setDefaultEncoding(properties.getEncoding().name());
+        }
 
-		messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
-		Duration cacheDuration = properties.getCacheDuration();
-		if (cacheDuration != null) {
-			messageSource.setCacheMillis(cacheDuration.toMillis());
-		}
-		messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
-		messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
-		return messageSource;
-	}
+        messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+        Duration cacheDuration = properties.getCacheDuration();
+        if (cacheDuration != null) {
+            messageSource.setCacheMillis(cacheDuration.toMillis());
+        }
+        messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+        messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
+        return messageSource;
+    }
 
     /**
      * 根据编译目录，提取国际化文件的baseNames
+     *
      * @param classpath 编译目录
-     * @param filePath 文件
+     * @param filePath  文件
      * @return 提取国家化文件路径
      */
-	private String extractMessagesBaseNames(Set<String> classpath, String filePath) {
-		for (String currentClasspath : classpath) {
-			if (filePath.contains(currentClasspath)) {
-				return filePath.substring(filePath.indexOf(currentClasspath) + currentClasspath.length(), filePath.indexOf(".properties"));
-			}
-		}
-		return null;
-	}
+    private String extractMessagesBaseNames(Set<String> classpath, String filePath) {
+        for (String currentClasspath : classpath) {
+            if (filePath.contains(currentClasspath)) {
+                return filePath.substring(filePath.indexOf(currentClasspath) + currentClasspath.length(), filePath.indexOf(".properties"));
+            }
+        }
+        return null;
+    }
 }

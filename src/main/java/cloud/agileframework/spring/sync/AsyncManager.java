@@ -26,7 +26,7 @@ public class AsyncManager {
      * 异步操作任务调度线程池
      */
     private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory("延时队列"));
-    private final ThreadPoolExecutor executor2 = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2,Integer.MAX_VALUE,3,TimeUnit.MINUTES, new LinkedBlockingQueue<>(),new ThreadFactory("阻塞队列"));
+    private final ThreadPoolExecutor executor2 = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, Integer.MAX_VALUE, 3, TimeUnit.MINUTES, new LinkedBlockingQueue<>(), new ThreadFactory("阻塞队列"));
 
     /**
      * 单例模式

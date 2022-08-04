@@ -23,25 +23,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 public class MappingUtilTest {
-	@Autowired
-	private WebApplicationContext context;
-	private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext context;
+    private MockMvc mockMvc;
 
-	@Before
-	public void setUp() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(context)
-				.alwaysDo(print())
-				.alwaysExpect(status().isOk())
-				.build();  //构造MockMvc
-	}
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .alwaysDo(print())
+                .alwaysExpect(status().isOk())
+                .build();  //构造MockMvc
+    }
 
-	@Test
-	public void testMatching() throws Exception {
-		MvcResult result = mockMvc.perform(get("/test"))
-				.andExpect(status().isOk())
-				.andReturn();
+    @Test
+    public void testMatching() throws Exception {
+        MvcResult result = mockMvc.perform(get("/test"))
+                .andExpect(status().isOk())
+                .andReturn();
 
-		Method method = MappingUtil.matching(result.getRequest()).getMethod();
-		Assert.assertEquals(method, TestController.class.getMethod("test"));
-	}
+        Method method = MappingUtil.matching(result.getRequest()).getMethod();
+        Assert.assertEquals(method, TestController.class.getMethod("test"));
+    }
 }
