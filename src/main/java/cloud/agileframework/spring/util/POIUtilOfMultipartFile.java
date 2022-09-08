@@ -2,6 +2,7 @@ package cloud.agileframework.spring.util;
 
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.file.poi.CellInfo;
+import cloud.agileframework.common.util.file.poi.ExcelFormatException;
 import cloud.agileframework.common.util.file.poi.POIUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -29,7 +30,7 @@ public class POIUtilOfMultipartFile extends POIUtil {
      * @param file excel文件
      * @return 格式化结果
      */
-    public static List<Map<String, Object>> readExcel(MultipartFile file) {
+    public static List<Map<String, Object>> readExcel(MultipartFile file) throws ExcelFormatException {
         return readExcel(file, null);
     }
 
@@ -41,7 +42,7 @@ public class POIUtilOfMultipartFile extends POIUtil {
      * @param columns map-key对应字段
      * @return 格式化结果
      */
-    public static List<Map<String, Object>> readExcel(MultipartFile file, List<CellInfo> columns) {
+    public static List<Map<String, Object>> readExcel(MultipartFile file, List<CellInfo> columns) throws ExcelFormatException {
         Workbook excel = readFile(file);
         return readExcel(new TypeReference<Map<String, Object>>() {
         }, columns, excel);
@@ -54,9 +55,9 @@ public class POIUtilOfMultipartFile extends POIUtil {
      * @param columns map-key对应字段
      * @return 格式化结果
      */
-    public static <T> List<T> readExcel(MultipartFile file, Class<T> clazz, List<CellInfo> columns) {
+    public static <T> List<T> readExcel(MultipartFile file, Class<T> clazz, List<CellInfo> columns) throws ExcelFormatException {
         Workbook excel = readFile(file);
-        return readExcel(new TypeReference<T>(clazz), columns, excel);
+        return readExcel(new TypeReference<>(clazz), columns, excel);
     }
 
     public static Workbook readFile(MultipartFile file) {
