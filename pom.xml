@@ -7,7 +7,7 @@
     <name>spring-util</name>
     <groupId>cloud.agileframework</groupId>
     <artifactId>spring-util</artifactId>
-    <version>2.1.0.M62</version>
+    <version>2.1.0.M63</version>
     <description>Spring extension Toolset</description>
     <url>https://github.com/mydeathtrial/spring-util</url>
 
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>cloud.agileframework</groupId>
             <artifactId>common-util</artifactId>
-            <version>2.1.0.M62</version>
+            <version>2.1.0.M63</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
