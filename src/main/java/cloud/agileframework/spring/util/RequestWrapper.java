@@ -1,11 +1,14 @@
 package cloud.agileframework.spring.util;
 
-import cloud.agileframework.common.constant.Constant;
 import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.object.ObjectUtil;
 import com.google.common.collect.Maps;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.multipart.support.MultipartResolutionDelegate;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
@@ -35,10 +38,7 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
         super(request);
 
         this.parameters = Maps.newHashMap();
-        parameters.remove(Constant.RequestAbout.SERVICE);
-        parameters.remove(Constant.RequestAbout.METHOD);
         parameters.putAll(request.getParameterMap());
-
         inParam = ParamUtil.handleInParamWithFile(this);
     }
 
@@ -226,7 +226,17 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
      * @return 文件
      */
     public MultipartFile getInParamOfFile(String key) {
-        return ParamUtil.getInParamOfFile(getInParam(), key);
+
+        boolean isMultipart = MultipartResolutionDelegate.isMultipartRequest(this);
+
+        if (!isMultipart) {
+            return null;
+        }
+        MultipartRequest multipartRequest = WebUtils.getNativeRequest(this, MultipartRequest.class);
+        if (multipartRequest == null) {
+            multipartRequest = new StandardMultipartHttpServletRequest(this);
+        }
+        return multipartRequest.getFile(key);
     }
 
     /**
@@ -236,7 +246,16 @@ public class RequestWrapper extends ContentCachingRequestWrapper {
      * @return 文件
      */
     public List<MultipartFile> getInParamOfFiles(String key) {
-        return ParamUtil.getInParamOfFiles(getInParam(), key);
+        boolean isMultipart = MultipartResolutionDelegate.isMultipartRequest(this);
+
+        if (!isMultipart) {
+            return Lists.newArrayList();
+        }
+        MultipartRequest multipartRequest = WebUtils.getNativeRequest(this, MultipartRequest.class);
+        if (multipartRequest == null) {
+            multipartRequest = new StandardMultipartHttpServletRequest(this);
+        }
+        return multipartRequest.getFiles(key);
     }
 
     /**

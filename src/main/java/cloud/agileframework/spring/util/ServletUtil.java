@@ -1,7 +1,7 @@
 package cloud.agileframework.spring.util;
 
 import cloud.agileframework.common.util.http.HttpUtil;
-import cloud.agileframework.common.util.stream.StreamUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.request.RequestAttributes;
@@ -163,7 +163,7 @@ public class ServletUtil {
     public static byte[] getBody(HttpServletRequest request) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            StreamUtil.toOutputStream(request.getInputStream(), bytes);
+            IOUtils.copy(request.getInputStream(), bytes);
             return bytes.toByteArray();
         } catch (Exception e) {
             return null;

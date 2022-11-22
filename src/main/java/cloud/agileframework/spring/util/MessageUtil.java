@@ -30,7 +30,7 @@ public class MessageUtil {
         }
     }
 
-    public static String message(String key, String defaultValue, Object... params) {
+    public static String message(String key, String defaultValue, String... params) {
         try {
             return messageRequire(key, defaultValue, params);
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public class MessageUtil {
         }
     }
 
-    public static String messageRequire(String key, String defaultValue, Object... params) {
+    public static String messageRequire(String key, String defaultValue, String... params) {
         if (messageSource == null) {
             init();
         }

@@ -7,6 +7,7 @@ import cloud.agileframework.common.util.properties.PropertiesUtil;
 import cloud.agileframework.common.util.string.StringUtil;
 import cloud.agileframework.spring.exception.CreateFileException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
@@ -23,11 +24,9 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,21 +39,7 @@ import java.util.stream.Collectors;
 /**
  * @author 佟盟 on 2017/12/21
  */
-public class MultipartFileUtil extends FileUtil {
-
-    public static String getFormat(MultipartFile file) {
-        try {
-            InputStream in = file.getInputStream();
-            final String originalFilename = file.getOriginalFilename();
-            String fileName = StringUtils.isBlank(originalFilename) ? file.getName() : originalFilename;
-            final String format = getFormat(in, fileName);
-            return format == null ? null : format.toLowerCase();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+public class MultipartFileUtil {
     /**
      * 请求中获取文件数据
      *
@@ -104,7 +89,7 @@ public class MultipartFileUtil extends FileUtil {
             return true;
         }
         String[] formats = format.split(Constant.RegularAbout.COMMA, -1);
-        return ArrayUtils.contains(formats, FileUtil.getFormat(file));
+        return ArrayUtils.contains(formats, FilenameUtils.getExtension(file.getName()));
     }
 
     /**
@@ -137,14 +122,6 @@ public class MultipartFileUtil extends FileUtil {
      */
     public static ResponseEntity<byte[]> downloadFile(String filePath) throws FileNotFoundException {
         return downloadFile(new File(filePath));
-    }
-
-    public static void downloadFile(Object value, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        downloadFile(value, request, response, getTempPath());
-    }
-
-    public static void downloadZip(List<?> fileList, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        downloadFile(fileList, request, response, getTempPath());
     }
 
     /**
@@ -200,7 +177,7 @@ public class MultipartFileUtil extends FileUtil {
      * @return 文件存储的相对目录集合
      */
     public static List<String> uploadFile(Collection<MultipartFile> files, String dirName, String fileName) {
-        if (StringUtil.isEmpty(fileName)) {
+        if (StringUtils.isEmpty(fileName)) {
             return files.stream().map(file -> {
                 try {
                     return uploadFile(file, dirName);
@@ -249,18 +226,16 @@ public class MultipartFileUtil extends FileUtil {
     public static String uploadFile(MultipartFile file, String dirName, String fileName) throws CreateFileException, IOException {
         String dirPath;
 
-        dirName = StringUtil.isEmpty(dirName) ? "" : dirName;
-        if (isIllegalDirName(dirName)) {
+        dirName = StringUtils.isEmpty(dirName) ? "" : dirName;
+        if (FileUtil.isIllegalDirName(dirName)) {
             throw new RuntimeException("非法目录结构，存在被攻击威胁");
         } else {
             dirPath = MultipartFileUtil.getTempPath() + dirName;
         }
 
         File dir = new File(dirPath);
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                throw new CreateFileException(dir.getAbsolutePath());
-            }
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new CreateFileException(dir.getAbsolutePath());
         }
 
         try {
@@ -272,13 +247,11 @@ public class MultipartFileUtil extends FileUtil {
             dirPath += File.separator;
         }
 
-        fileName = StringUtil.isEmpty(fileName) ? file.getOriginalFilename() : fileName;
+        fileName = StringUtils.isEmpty(fileName) ? file.getOriginalFilename() : fileName;
         String absoluteFileName = dirPath + fileName;
         File uploadFile = new File(absoluteFileName);
-        if (!uploadFile.exists()) {
-            if (!uploadFile.createNewFile()) {
+        if (!uploadFile.exists() && !uploadFile.createNewFile()) {
                 throw new CreateFileException(absoluteFileName);
-            }
         }
         file.transferTo(uploadFile);
         return absoluteFileName;

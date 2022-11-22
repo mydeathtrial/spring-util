@@ -4,6 +4,7 @@ import cloud.agileframework.common.util.clazz.TypeReference;
 import cloud.agileframework.common.util.file.poi.CellInfo;
 import cloud.agileframework.common.util.file.poi.ExcelFormatException;
 import cloud.agileframework.common.util.file.poi.POIUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static cloud.agileframework.spring.util.MultipartFileUtil.getFormat;
 
 /**
  * @author 佟盟 on 2018/10/16
@@ -69,7 +68,7 @@ public class POIUtilOfMultipartFile extends POIUtil {
             if (s.length > 1) {
                 suffix = s[s.length - 1];
             } else {
-                suffix = Objects.requireNonNull(getFormat(file)).toLowerCase();
+                suffix = Objects.requireNonNull(FilenameUtils.getExtension(file.getName())).toLowerCase();
             }
             try {
                 if (xls.equals(suffix)) {

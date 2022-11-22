@@ -40,16 +40,7 @@ public class MultipartFileUtilTest {
                 .alwaysExpect(status().isOk())
                 .build();  //构造MockMvc
     }
-
-    @Test
-    public void testGetFormat() {
-        String a = MultipartFileUtil.getFormat(new MockMultipartFile("a.TXT", new byte[]{}));
-        Assert.assertEquals("txt", a);
-
-        String b = MultipartFileUtil.getFormat(new MockMultipartFile("a.doc", new byte[]{}));
-        Assert.assertEquals("doc", b);
-    }
-
+    
     @Test
     public void testGetFileFormRequest() throws Exception {
         MvcResult result = mockMvc.perform(fileUpload("/test")
